@@ -1,28 +1,28 @@
 const $app = document.getElementById('app');
 const $observe = document.getElementById('observe');
-const API = 'https://rickandmortyapi.com/api/character/';
+let API = 'https://rickandmortyapi.com/api/character/';
+API = 'https://us-central1-escuelajs-api.cloudfunctions.net/characters';
 
-const getData = api => {
-  fetch(api)
-    .then(response => response.json())
-    .then(response => {
-      window.localStorage['next_fetch'] = response.info.next;
-      // debugger;
-      const characters = response.results;
-      let output = characters.map(character => {
-        return `
+const getData = async (api) => {
+  if (window.localStorage['next_fetch']) {
+    api = window.localStorage['next_fetch'];
+  }
+  const response = await fetch(api);
+  const data = await (response.json());
+  window.localStorage['next_fetch'] = data.info.next;
+  const characters = data.results;
+  let output = characters.map(character => {
+    return `
       <article class="Card">
         <img src="${character.image}" />
         <h2>${character.name}<span>${character.species}</span></h2>
       </article>
     `
-      }).join('');
-      let newItem = document.createElement('section');
-      newItem.classList.add('Items');
-      newItem.innerHTML = output;
-      $app.appendChild(newItem);
-    })
-    .catch(error => console.log(error));
+  }).join('');
+  let newItem = document.createElement('section');
+  newItem.classList.add('Items');
+  newItem.innerHTML = output;
+  $app.appendChild(newItem);
 }
 
 const loadData = () => {
