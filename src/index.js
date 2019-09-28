@@ -6,6 +6,8 @@ const getData = api => {
   fetch(api)
     .then(response => response.json())
     .then(response => {
+      window.localStorage['next_fetch'] = response.info.next;
+      // debugger;
       const characters = response.results;
       let output = characters.map(character => {
         return `
